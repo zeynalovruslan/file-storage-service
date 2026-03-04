@@ -11,4 +11,6 @@ public interface ApiKeyRepository extends JpaRepository<ApiKeyEntity, Long> {
 
     Optional<ApiKeyEntity> findByKeyPrefixAndActiveTrue(String keyPrefix);
 
+    boolean existsByName(String name);
+
 }

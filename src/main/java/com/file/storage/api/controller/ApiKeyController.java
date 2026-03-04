@@ -15,18 +15,18 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api-keys")
 public class ApiKeyController {
-    private static final String HEADER_KEY = "X-API-Key";
+    private static final String HEADER_KEY = "SECRET-KEY";
 
     private final ApiKeyService apiKeyService;
     private final AuditService auditService;
 
     @PostMapping
-    public ResponseEntity<ApiKeyResponseDto> createKey(@RequestHeader(value = HEADER_KEY, required = false)
-                                                       @NotBlank String xApiKey,
+    public ResponseEntity<ApiKeyResponseDto> createKey(@RequestHeader(value = HEADER_KEY, required = true)
+                                                       @NotBlank String secretKey,
                                                        @RequestBody String name,
                                                        HttpServletRequest request) {
         try {
-            ApiKeyResponseDto dto = apiKeyService.createKey(xApiKey, name);
+            ApiKeyResponseDto dto = apiKeyService.createKey(secretKey, name);
 
             auditService.log(request, null,
                     AuditResultEnum.CREATE_KEY, AuditStatusEnum.SUCCESS,

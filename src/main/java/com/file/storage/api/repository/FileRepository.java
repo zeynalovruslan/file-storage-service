@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.Optional;
 
 @Repository
-public interface FileRepository extends JpaRepository<FileEntity, Long> {
+public interface FileRepository extends JpaRepository<FileEntity, String> {
 
     Optional<FileEntity> findByIdAndCreatedBy_IdAndDeletedAtIsNull(String id, Long apiKeyId);
 

@@ -29,7 +29,7 @@ public class ApiKeyAuthFilter extends OncePerRequestFilter {
     private final ApiKeyRepository apiKeyRepository;
     private final AuditService auditService;
 
-    @Value("${security.admin-api-key}")
+    @Value("${security.secret-api-key}")
     private String adminKey;
 
     @Override
@@ -73,7 +73,6 @@ public class ApiKeyAuthFilter extends OncePerRequestFilter {
         ApiKeyEntity entity = apiKeyRepository.findByKeyPrefixAndActiveTrue(prefix).orElse(null);
         if (entity == null) {
             unauthorized(request, response, "invalid token format (prefix), path=" + path);
-
             return;
         }
 

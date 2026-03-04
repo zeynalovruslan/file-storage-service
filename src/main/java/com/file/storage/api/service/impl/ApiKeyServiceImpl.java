@@ -19,18 +19,23 @@ public class ApiKeyServiceImpl implements ApiKeyService {
     private final BCryptPasswordEncoder encoder;
     private final ApiKeyRepository apiKeyRepository;
 
-    @Value("${security.admin-api-key}")
-    private String adminKey;
+    @Value("${security.secret-api-key}")
+    private String secretKey;
 
     @Override
-    public ApiKeyResponseDto createKey(String apiKey, String name) {
+    public ApiKeyResponseDto createKey(String reqSecretKey, String name) {
 
-        if (apiKey == null || apiKey.isBlank()) {
-            throw new BadRequestException("Apikey can not be empty");
+        if (reqSecretKey == null || reqSecretKey.isBlank()) {
+            throw new BadRequestException("Secret key can not be empty");
         }
 
-        if (!apiKey.equals(adminKey)) {
-            throw new ForbiddenException("Apikey does not match admin key");
+        if (!reqSecretKey.equals(secretKey)) {
+            throw new ForbiddenException("The secret key you sent is incorrect.");
+        }
+
+        boolean exists = apiKeyRepository.existsByName(name);
+        if (exists) {
+            throw new BadRequestException("Apikey already exists");
         }
 
         String realKey = TokenUtil.generateToken();

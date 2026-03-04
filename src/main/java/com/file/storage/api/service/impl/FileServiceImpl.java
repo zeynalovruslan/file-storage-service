@@ -37,6 +37,12 @@ public class FileServiceImpl implements FileService {
             throw new BadRequestException("File is empty");
         }
 
+        ApiKeyEntity apiKeyReference = apiKeyRepository.getReferenceById(apiKey);
+
+        if (apiKeyReference == null) {
+            throw new NotFoundException("Api key not found");
+        }
+
         String objectKey = UUID.randomUUID().toString();
 
         try (InputStream in = file.getInputStream()) {
@@ -49,8 +55,6 @@ public class FileServiceImpl implements FileService {
         } catch (Exception e) {
             throw new RuntimeException("Storage upload failed", e);
         }
-
-        ApiKeyEntity apiKeyReference = apiKeyRepository.getReferenceById(apiKey);
 
         FileEntity entity = FileEntity.builder()
                 .originalName(file.getOriginalFilename())
@@ -78,9 +82,8 @@ public class FileServiceImpl implements FileService {
     @Override
     public FileDownloadResponseDto download(String id, Long apiKeyId) {
 
-        FileEntity file =
-                fileRepository.findByIdAndCreatedBy_IdAndDeletedAtIsNull(id, apiKeyId)
-                        .orElseThrow(() -> new NotFoundException("File not found"));
+        FileEntity file = fileRepository.findByIdAndCreatedBy_IdAndDeletedAtIsNull(id, apiKeyId)
+                .orElseThrow(() -> new NotFoundException("File not found"));
 
         try {
             InputStream stream = storageProvider.download(file.getObjectKey()
