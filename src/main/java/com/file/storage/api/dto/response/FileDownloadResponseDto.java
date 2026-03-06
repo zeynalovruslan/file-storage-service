@@ -6,8 +6,8 @@ import java.io.InputStream;
 
 @Data
 public class FileDownloadResponseDto {
-    private String originalName;
-    private String contentType;
-    private long sizeBytes;
+    private String fileName;
+    private String mediaType;
+    private long fileSize;
     private InputStream stream;
 }

@@ -16,7 +16,7 @@ import java.time.Instant;
         @Index(name = "idx_api_keys_active", columnList = "is_active"),
         @Index(name = "idx_api_keys_created_at", columnList = "created_at")
 }, uniqueConstraints = {
-        @UniqueConstraint(name = "uq_api_keys_key_hash", columnNames = "key_hash")
+        @UniqueConstraint(name = "uq_api_keys_api_key_hash", columnNames = "api_key_hash")
 })
 public class ApiKeyEntity {
 
@@ -27,11 +27,11 @@ public class ApiKeyEntity {
     @Column(name = "name", nullable = false, length = 100)
     private String name;
 
-    @Column(name = "key_hash", nullable = false, length = 255)
-    private String keyHash;
+    @Column(name = "api_key_hash", nullable = false, length = 255)
+    private String apiKeyHash;
 
-    @Column(name = "key_prefix", length = 20)
-    private String keyPrefix;
+    @Column(name = "short_key", length = 20)
+    private String shortKey;
 
     @Column(name = "is_active", nullable = false)
     private boolean active = true;

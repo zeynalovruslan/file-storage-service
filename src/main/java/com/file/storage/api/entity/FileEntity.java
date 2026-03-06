@@ -26,14 +26,14 @@ public class FileEntity {
     @Column(name = "id", nullable = false, length = 36)
     private String id = UUID.randomUUID().toString();
 
-    @Column(name = "original_name", nullable = false, length = 512)
-    private String originalName;
+    @Column(name = "file_name", nullable = false, length = 512)
+    private String fileName;
 
-    @Column(name = "content_type", length = 255)
-    private String contentType;
+    @Column(name = "media_type", length = 255)
+    private String mediaType;
 
-    @Column(name = "size_bytes", nullable = false)
-    private long sizeBytes;
+    @Column(name = "file_size", nullable = false)
+    private long fileSize;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "storage_provider", nullable = false, length = 30)
@@ -46,15 +46,15 @@ public class FileEntity {
     private String objectKey;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_by_api_key_id",
+    @JoinColumn(name = "owner_key_api_key_id",
             foreignKey = @ForeignKey(name = "fk_files_api_key"))
-    private ApiKeyEntity createdBy;
+    private ApiKeyEntity ownerKey;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt = Instant.now();
 
-    @Column(name = "deleted_at")
-    private Instant deletedAt;
+    @Column(name = "removed_at")
+    private Instant removedAt;
 
 
     @PrePersist

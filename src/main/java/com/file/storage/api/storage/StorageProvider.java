@@ -6,7 +6,7 @@ public interface StorageProvider {
 
     String name();
 
-    void upload(String objectKey, InputStream data, long size, String contentType);
+    void upload(String objectKey, InputStream data, long size, String mediaType);
 
     InputStream download(String objectKey);
 

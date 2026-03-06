@@ -8,8 +8,8 @@ import java.time.Instant;
 public class FileUploadResponseDto {
 
     private String id;
-    private String originalName;
-    private String contentType;
-    private long sizeBytes;
+    private String fileName;
+    private String mediaType;
+    private long fileSize;
     private Instant createdAt;
 }

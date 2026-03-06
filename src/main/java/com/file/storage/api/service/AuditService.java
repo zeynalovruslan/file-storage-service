@@ -7,8 +7,8 @@ import jakarta.servlet.http.HttpServletRequest;
 public interface AuditService {
 
     void log(HttpServletRequest req,
-             Long apiKeyId,
-             AuditResultEnum action,
+             Long clientKey,
+             AuditResultEnum result,
              AuditStatusEnum status,
              String fileId,
              String message);

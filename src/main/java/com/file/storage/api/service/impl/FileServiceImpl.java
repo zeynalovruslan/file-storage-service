@@ -31,13 +31,13 @@ public class FileServiceImpl implements FileService {
     private final StorageProvider storageProvider;
 
     @Override
-    public FileUploadResponseDto upload(MultipartFile file, Long apiKey) {
+    public FileUploadResponseDto upload(MultipartFile file, Long clientKeyId) {
 
         if (file == null || file.isEmpty()) {
             throw new BadRequestException("File is empty");
         }
 
-        ApiKeyEntity apiKeyReference = apiKeyRepository.getReferenceById(apiKey);
+        ApiKeyEntity apiKeyReference = apiKeyRepository.getReferenceById(clientKeyId);
 
         if (apiKeyReference == null) {
             throw new NotFoundException("Api key not found");
@@ -57,13 +57,13 @@ public class FileServiceImpl implements FileService {
         }
 
         FileEntity entity = FileEntity.builder()
-                .originalName(file.getOriginalFilename())
-                .contentType(file.getContentType())
-                .sizeBytes(file.getSize())
+                .fileName(file.getOriginalFilename())
+                .mediaType(file.getContentType())
+                .fileSize(file.getSize())
                 .storageProvider(ProviderEnum.valueOf(storageProvider.name().toUpperCase()))
                 .bucket(storageProvider.bucket())
                 .objectKey(objectKey)
-                .createdBy(apiKeyReference)
+                .ownerKey(apiKeyReference)
                 .createdAt(Instant.now())
                 .build();
 
@@ -71,29 +71,29 @@ public class FileServiceImpl implements FileService {
 
         FileUploadResponseDto response = new FileUploadResponseDto();
         response.setId(saved.getId());
-        response.setOriginalName(saved.getOriginalName());
-        response.setContentType(saved.getContentType());
-        response.setSizeBytes(saved.getSizeBytes());
+        response.setFileName(saved.getFileName());
+        response.setMediaType(saved.getMediaType());
+        response.setFileSize(saved.getFileSize());
         response.setCreatedAt(saved.getCreatedAt());
 
         return response;
     }
 
     @Override
-    public FileDownloadResponseDto download(String id, Long apiKeyId) {
+    public FileDownloadResponseDto download(String id, Long clientKeyId) {
 
-        FileEntity file = fileRepository.findByIdAndCreatedBy_IdAndDeletedAtIsNull(id, apiKeyId)
+        FileEntity file = fileRepository.findByIdAndOwnerKey_IdAndRemovedAtIsNull(id, clientKeyId)
                 .orElseThrow(() -> new NotFoundException("File not found"));
 
         try {
             InputStream stream = storageProvider.download(file.getObjectKey()
             );
-            String contentType = file.getContentType() == null ? "application/octet-stream" : file.getContentType();
+            String contentType = file.getMediaType() == null ? "application/octet-stream" : file.getMediaType();
 
             FileDownloadResponseDto response = new FileDownloadResponseDto();
-            response.setOriginalName(file.getOriginalName());
-            response.setContentType(contentType);
-            response.setSizeBytes(file.getSizeBytes());
+            response.setFileName(file.getFileName());
+            response.setMediaType(contentType);
+            response.setFileSize(file.getFileSize());
             response.setStream(stream);
 
             return response;
@@ -106,12 +106,12 @@ public class FileServiceImpl implements FileService {
     @Override
     public Page<FileResponseDto> getFileList(Pageable pageable) {
 
-        return fileRepository.findAllByDeletedAtIsNull(pageable).map(fileEntity -> {
+        return fileRepository.findAllByRemovedAtIsNull(pageable).map(fileEntity -> {
             FileResponseDto response = new FileResponseDto();
             response.setId(fileEntity.getId());
-            response.setOriginalName(fileEntity.getOriginalName());
-            response.setContentType(fileEntity.getContentType());
-            response.setSizeBytes(fileEntity.getSizeBytes());
+            response.setOriginalName(fileEntity.getFileName());
+            response.setContentType(fileEntity.getMediaType());
+            response.setSizeBytes(fileEntity.getFileSize());
             response.setCreatedAt(fileEntity.getCreatedAt());
 
             return response;
@@ -120,9 +120,9 @@ public class FileServiceImpl implements FileService {
 
 
     @Override
-    public void delete(String id, Long apiKeyId) {
+    public void delete(String id, Long clientKeyId) {
 
-        FileEntity file = fileRepository.findByIdAndCreatedBy_IdAndDeletedAtIsNull(id, apiKeyId)
+        FileEntity file = fileRepository.findByIdAndOwnerKey_IdAndRemovedAtIsNull(id, clientKeyId)
                 .orElseThrow(() -> new NotFoundException("File not found"));
         try {
             storageProvider.delete(
@@ -132,7 +132,7 @@ public class FileServiceImpl implements FileService {
             throw new RuntimeException("Storage delete failed", e);
         }
 
-        file.setDeletedAt(Instant.now());
+        file.setRemovedAt(Instant.now());
         fileRepository.save(file);
     }
 }

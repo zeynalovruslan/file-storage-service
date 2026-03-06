@@ -19,7 +19,7 @@ import java.time.Instant;
 @Entity
 @Table(name = "audit_logs", indexes = {
         @Index(name = "idx_audit_created_at", columnList = "created_at"),
-        @Index(name = "idx_audit_action", columnList = "action"),
+        @Index(name = "idx_audit_action", columnList = "result"),
         @Index(name = "idx_audit_file_id", columnList = "file_id"),
         @Index(name = "idx_audit_api_key", columnList = "api_key_id")
 })
@@ -34,17 +34,17 @@ public class AuditEntity {
     private ApiKeyEntity apiKey;
 
     @Enumerated(EnumType.STRING)
-    @Column(name="action", nullable = false, length = 50)
-    private AuditResultEnum action;
+    @Column(name="result", nullable = false, length = 50)
+    private AuditResultEnum result;
 
     @Column(name="file_id", length = 45)
     private String fileId;
 
-    @Column(name="ip", length = 45)
-    private String ip;
+    @Column(name="ip_address", length = 45)
+    private String ipAddress;
 
-    @Column(name="user_agent", length = 512)
-    private String userAgent;
+    @Column(name="client_info", length = 512)
+    private String clientInfo;
 
     @Enumerated(EnumType.STRING)
     @Column(name="status", nullable = false, length = 20)

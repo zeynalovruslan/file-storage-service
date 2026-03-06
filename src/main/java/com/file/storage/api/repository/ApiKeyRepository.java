@@ -9,7 +9,7 @@ import java.util.Optional;
 @Repository
 public interface ApiKeyRepository extends JpaRepository<ApiKeyEntity, Long> {
 
-    Optional<ApiKeyEntity> findByKeyPrefixAndActiveTrue(String keyPrefix);
+    Optional<ApiKeyEntity> findByShortKeyAndActiveTrue(String shortKey);
 
     boolean existsByName(String name);
 

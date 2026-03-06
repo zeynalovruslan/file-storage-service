@@ -8,5 +8,5 @@ public class ApiKeyResponseDto {
     private Long id;
     private String name;
     private String apiKey;
-    private String prefix;
+    private String shortKey;
 }

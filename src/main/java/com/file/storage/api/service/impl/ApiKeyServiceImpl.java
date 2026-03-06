@@ -40,19 +40,19 @@ public class ApiKeyServiceImpl implements ApiKeyService {
 
         String realKey = TokenUtil.generateToken();
         String encodedKey = encoder.encode(realKey);
-        String prefix = TokenUtil.extractPrefix(realKey);
+        String shortKey = TokenUtil.extractPrefix(realKey);
 
         ApiKeyEntity apiKeyEntity = new ApiKeyEntity();
         apiKeyEntity.setName(name);
-        apiKeyEntity.setKeyHash(encodedKey);
-        apiKeyEntity.setKeyPrefix(prefix);
+        apiKeyEntity.setApiKeyHash(encodedKey);
+        apiKeyEntity.setShortKey(shortKey);
         ApiKeyEntity savedEntity = apiKeyRepository.save(apiKeyEntity);
 
         ApiKeyResponseDto response = new ApiKeyResponseDto();
         response.setId(savedEntity.getId());
         response.setName(name);
         response.setApiKey(realKey);
-        response.setPrefix(savedEntity.getKeyPrefix());
+        response.setShortKey(savedEntity.getShortKey());
 
         return response;
     }

@@ -35,18 +35,18 @@ public class FileController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public FileUploadResponseDto upload(@RequestPart("file") MultipartFile file,
-                                        @RequestAttribute("apiKeyId") Long apiKeyId,
+                                        @RequestAttribute("apiKeyId") Long clientKeyId,
                                         HttpServletRequest request) {
         try {
-            FileUploadResponseDto dto = fileService.upload(file, apiKeyId);
+            FileUploadResponseDto dto = fileService.upload(file, clientKeyId);
 
-            auditService.log(request, apiKeyId,
+            auditService.log(request, clientKeyId,
                     AuditResultEnum.UPLOAD, AuditStatusEnum.SUCCESS,
                     dto.getId(), SUCCESS_MESSAGE);
 
             return dto;
         } catch (Exception e) {
-            auditService.log(request, apiKeyId,
+            auditService.log(request, clientKeyId,
                     AuditResultEnum.AUTH_FAIL, AuditStatusEnum.FAIL,
                     null, e.getMessage());
             throw e;
@@ -66,28 +66,28 @@ public class FileController {
 
     @GetMapping("/{id}")
     public void download(@PathVariable String id,
-                         @RequestAttribute("apiKeyId") Long apiKeyId,
+                         @RequestAttribute("apiKeyId") Long clientKeyId,
                          HttpServletResponse response,
                          HttpServletRequest request) {
 
-        FileDownloadResponseDto fileResponse = fileService.download(id, apiKeyId);
+        FileDownloadResponseDto fileResponse = fileService.download(id, clientKeyId);
 
-        response.setContentType(fileResponse.getContentType());
+        response.setContentType(fileResponse.getMediaType());
         response.setHeader(
                 HttpHeaders.CONTENT_DISPOSITION,
-                "attachment; filename=\"" + fileResponse.getOriginalName() + "\""
+                "attachment; filename=\"" + fileResponse.getFileName() + "\""
         );
-        response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(fileResponse.getSizeBytes()));
+        response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(fileResponse.getFileSize()));
 
         try (InputStream stream = fileResponse.getStream()) {
             StreamUtils.copy(stream, response.getOutputStream());
 
-            auditService.log(request, apiKeyId,
+            auditService.log(request, clientKeyId,
                     AuditResultEnum.DOWNLOAD, AuditStatusEnum.SUCCESS,
                     id, SUCCESS_MESSAGE);
 
         } catch (Exception e) {
-            auditService.log(request, apiKeyId,
+            auditService.log(request, clientKeyId,
                     AuditResultEnum.DOWNLOAD, AuditStatusEnum.FAIL,
                     id, e.getMessage());
 
@@ -98,17 +98,17 @@ public class FileController {
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable String id,
-                       @RequestAttribute("apiKeyId") Long apiKeyId,
+                       @RequestAttribute("apiKeyId") Long clientKey,
                        HttpServletRequest request) {
         try {
-            fileService.delete(id, apiKeyId);
+            fileService.delete(id, clientKey);
 
-            auditService.log(request, apiKeyId,
+            auditService.log(request, clientKey,
                     AuditResultEnum.DELETE, AuditStatusEnum.SUCCESS,
                     id, SUCCESS_MESSAGE);
 
         } catch (Exception e) {
-            auditService.log(request, apiKeyId,
+            auditService.log(request, clientKey,
                     AuditResultEnum.DELETE, AuditStatusEnum.FAIL,
                     id, e.getMessage());
             throw e;

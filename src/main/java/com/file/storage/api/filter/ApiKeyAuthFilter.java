@@ -23,14 +23,13 @@ import java.io.IOException;
 @Component
 public class ApiKeyAuthFilter extends OncePerRequestFilter {
 
-    private static final int PREFIX_LEN = 10;
 
     private final BCryptPasswordEncoder encoder;
     private final ApiKeyRepository apiKeyRepository;
     private final AuditService auditService;
 
     @Value("${security.secret-api-key}")
-    private String adminKey;
+    private String secretApiKey;
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
@@ -56,7 +55,7 @@ public class ApiKeyAuthFilter extends OncePerRequestFilter {
         }
 
         if (isAdminEndpoint) {
-            if (adminKey != null && !adminKey.isBlank() && adminKey.equals(key)) {
+            if (secretApiKey != null && !secretApiKey.isBlank() && secretApiKey.equals(key)) {
                 filterChain.doFilter(request, response);
                 return;
             }
@@ -64,24 +63,24 @@ public class ApiKeyAuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        String prefix = TokenUtil.extractPrefix(key);
-        if (prefix == null) {
+        String shortKey = TokenUtil.extractPrefix(key);
+        if (shortKey == null) {
             unauthorized(request, response, "invalid token format (prefix), path=" + path);
             return;
         }
 
-        ApiKeyEntity entity = apiKeyRepository.findByKeyPrefixAndActiveTrue(prefix).orElse(null);
+        ApiKeyEntity entity = apiKeyRepository.findByShortKeyAndActiveTrue(shortKey).orElse(null);
         if (entity == null) {
             unauthorized(request, response, "invalid token format (prefix), path=" + path);
             return;
         }
 
-        if (!encoder.matches(key, entity.getKeyHash())) {
+        if (!encoder.matches(key, entity.getApiKeyHash())) {
             unauthorized(request, response, "api key not found, path=" + path);
             return;
         }
 
-        request.setAttribute("apiKeyId", entity.getId());
+        request.setAttribute("clientKeyId", entity.getId());
         filterChain.doFilter(request, response);
     }
 

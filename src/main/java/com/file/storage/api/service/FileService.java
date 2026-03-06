@@ -10,11 +10,11 @@ import org.springframework.data.domain.Pageable;
 
 public interface FileService {
 
-    FileUploadResponseDto upload(MultipartFile file, Long apiKey);
+    FileUploadResponseDto upload(MultipartFile file, Long clientKeyId);
 
-    FileDownloadResponseDto download(String id, Long apiKeyId);
+    FileDownloadResponseDto download(String id, Long clientKeyId);
 
     Page<FileResponseDto> getFileList(Pageable pageable);
 
-    void delete(String id, Long apiKeyId);
+    void delete(String id, Long clientKeyId);
 }

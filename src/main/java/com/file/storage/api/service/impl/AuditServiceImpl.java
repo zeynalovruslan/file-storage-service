@@ -21,23 +21,23 @@ public class AuditServiceImpl implements AuditService {
 
     @Override
     public void log(HttpServletRequest req,
-                    Long apiKeyId, AuditResultEnum action,
+                    Long clientKey, AuditResultEnum result,
                     AuditStatusEnum status, String fileId,
                     String message) {
 
         try {
             AuditEntity audit = new AuditEntity();
 
-            if (apiKeyId != null) {
-                audit.setApiKey(apiKeyRepository.getReferenceById(apiKeyId));
+            if (clientKey != null) {
+                audit.setApiKey(apiKeyRepository.getReferenceById(clientKey));
             }
 
-            audit.setAction(action);
+            audit.setResult(result);
             audit.setStatus(status);
             audit.setFileId(fileId);
             audit.setMessage(message);
-            audit.setIp(req.getRemoteAddr());
-            audit.setUserAgent(req.getHeader("User-Agent"));
+            audit.setIpAddress(req.getRemoteAddr());
+            audit.setClientInfo(req.getHeader("User-Agent"));
             auditRepository.save(audit);
         } catch (Exception ignore) {
 

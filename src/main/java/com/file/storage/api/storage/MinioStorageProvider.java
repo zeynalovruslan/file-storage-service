@@ -24,18 +24,18 @@ public class MinioStorageProvider implements StorageProvider {
 
     @Override
     public String name() {
-        return "minio";
+        return "minio".toUpperCase();
     }
 
     @Override
-    public void upload(String objectKey, InputStream data, long size, String contentType) {
+    public void upload(String objectKey, InputStream data, long size, String mediaType) {
 
         try {
             minioClient.putObject(
                     PutObjectArgs.builder()
                             .bucket(bucket)
                             .object(objectKey)
-                            .contentType(contentType)
+                            .contentType(mediaType)
                             .stream(data, size, -1)
                             .build()
             );

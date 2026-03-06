@@ -11,8 +11,8 @@ public class TokenUtil {
     private static final SecureRandom random = new SecureRandom();
 
     private static final int RAW_BYTES = 32;
-    private static final String KEY_PREFIX = "fs_";
-    private static final int PREFIX_LEN = 10;
+    private static final String KEY_PREFIX = "fs_secret_";
+    private static final int PREFIX_LEN = 20;
 
 
     public static String generateToken() {
@@ -23,9 +23,9 @@ public class TokenUtil {
     }
 
     public static String extractPrefix(String key) {
-        if (key == null || !key.startsWith("fs_")) return null;
-        int end = Math.min(key.length(), 3 + PREFIX_LEN);
-        if (end <= 3) return null;
+        if (key == null || !key.startsWith("fs_secret_")) return null;
+        int end = Math.min(key.length(), 10 + PREFIX_LEN);
+        if (end <= 10) return null;
         return key.substring(0, end);
     }
 }

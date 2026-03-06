@@ -12,8 +12,8 @@ import java.util.Optional;
 @Repository
 public interface FileRepository extends JpaRepository<FileEntity, String> {
 
-    Optional<FileEntity> findByIdAndCreatedBy_IdAndDeletedAtIsNull(String id, Long apiKeyId);
+    Optional<FileEntity> findByIdAndOwnerKey_IdAndRemovedAtIsNull(String id, Long apiKeyId);
 
-    Page<FileEntity> findAllByDeletedAtIsNull(Pageable pageable);
+    Page<FileEntity> findAllByRemovedAtIsNull(Pageable pageable);
 
 }

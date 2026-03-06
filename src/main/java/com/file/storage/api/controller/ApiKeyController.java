@@ -22,11 +22,11 @@ public class ApiKeyController {
 
     @PostMapping
     public ResponseEntity<ApiKeyResponseDto> createKey(@RequestHeader(value = HEADER_KEY, required = true)
-                                                       @NotBlank String secretKey,
+                                                       @NotBlank String reqSecretKey,
                                                        @RequestBody String name,
                                                        HttpServletRequest request) {
         try {
-            ApiKeyResponseDto dto = apiKeyService.createKey(secretKey, name);
+            ApiKeyResponseDto dto = apiKeyService.createKey(reqSecretKey, name);
 
             auditService.log(request, null,
                     AuditResultEnum.CREATE_KEY, AuditStatusEnum.SUCCESS,
