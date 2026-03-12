@@ -324,6 +324,14 @@ MINIO_BUCKET=files
 STORAGE_PROVIDER=MINIO
 
 
+---
+
+## Müəllif
+
+Ruslan Zeynalov
+
+Java Backend Developer
+
 
 
 
