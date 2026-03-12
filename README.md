@@ -62,17 +62,17 @@ X-API-Key: your-api-key
 
 ---
 
-# 👑 Admin API Key
+# 👑 Secret API Key
 
-Admin API key yalnız **API key idarə etmək üçün** istifadə olunur.
+Secret API key yalnız **API key idarə etmək üçün** istifadə olunur.
 
-Admin key yalnız aşağıdakı endpointlər üçün keçərlidir:
+Secret key yalnız aşağıdakı endpointlər üçün keçərlidir:
 
 
 /api-keys/**
 
 
-Admin key **file endpointlərində istifadə edilə bilməz**.
+Secret key **file endpointlərində istifadə edilə bilməz**.
 
 ---
 
